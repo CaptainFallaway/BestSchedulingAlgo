@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
@@ -30,30 +31,25 @@ func main() {
 		width, height := consolesize.GetConsoleSize()
 		if w != width || h != height {
 			terminal.ClearScreen()
-			renderBox(width, height)
 			w = width
 			h = height
-			terminal.CursorToPos(2, height-2)
 		}
+		renderBox(width, height)
 	}
 }
 
 func renderBox(cols, rows int) {
-	terminal.HideCursor()
-
-	vectors := make([]utils.TermVector, (cols*rows)-((cols-1)+(rows-1)))
-
+	// terminal.HideCursor()
 	for r := 1; r < rows; r++ {
 		for c := 1; c < cols; c++ {
 			char, ok := getChar(c, r, cols, rows)
+
 			if ok {
-				vectors = append(vectors, utils.TermVector{X: c, Y: r, Char: char})
+				terminal.CursorToPos(c, r)
+				fmt.Print(char)
 			}
 		}
 	}
-
-	utils.RenderVectors(vectors)
-
 	terminal.ShowCursor()
 }
 
