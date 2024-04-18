@@ -13,17 +13,17 @@ var Border = utils.Borders{
 	Vertical:    '│',
 }
 
-func getBorder(c, r, width, height int, char rune) string {
+func getBorder(c, r, width, height int, char rune) rune {
 	if c == 1 && r == 1 {
 		return Border.TopLeft
 	}
 	if c == width-1 && r == 1 {
 		return Border.TopRight
 	}
-	if c == 1 && r == width-1 {
+	if c == 1 && r == height-1 {
 		return Border.BottomLeft
 	}
-	if c == width-1 && r == width-1 {
+	if c == width-1 && r == height-1 {
 		return Border.BottomRight
 	}
 	if r == 1 || r == height-1 {

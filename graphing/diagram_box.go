@@ -1,22 +1,24 @@
 package graphing
 
-import "sync"
+import "math/rand"
 
-type DiagramBox struct {
-	BaseBoxComponent
+type DiagramBox struct{}
+
+var chars = []rune{'e', 't'}
+
+func getRandomChar() rune {
+	return chars[rand.Intn(2)]
 }
 
-func (d *DiagramBox) Render(rc *RenderedComponent, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	temp := make([]Vector, 0, d.Width*d.Height)
-
-	for r := 1; r < d.Height; r++ {
-		for c := 1; c < d.Width; c++ {
-			char := getBorder(c, r, d.Width, d.Height, 'e')
-			temp = append(temp, Vector{char, c, r})
+func (d *DiagramBox) Render(size TSize, rs *chan TermPixel, syncer ISyncer) {
+	var char rune
+	var randChar rune
+	for r := 1; r < size.Height; r++ {
+		for c := 1; c < size.Width; c++ {
+			randChar = getRandomChar()
+			char = getBorder(c, r, size.Width, size.Height, randChar)
+			(*rs) <- TermPixel{Char: char, X: c + size.OffsetX, Y: r + size.OffsetY}
 		}
 	}
-
-	rc.Content = temp
+	syncer.Done()
 }

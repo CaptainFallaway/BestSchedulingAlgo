@@ -1,19 +1,21 @@
 package graphing
 
-import "sync"
-
 type Renderable interface {
-	Render(*RenderedComponent, *sync.WaitGroup)
+	Render(TSize, *chan TermPixel, ISyncer)
 }
 
-type RenderInstruction struct {
-	Char string
+type RenderAcc struct {
+	Content []TermPixel
+}
+
+func (ra *RenderAcc) Append(r TermPixel) {
+	ra.Content = append(ra.Content, r)
+}
+
+// In the future pixels should either be ANSI instructions with pos
+// and with or with other ANSI attributes
+type TermPixel struct {
+	Char rune
 	X    int
 	Y    int
-}
-
-type ComponentAccumulator struct {
-	Content []RenderInstruction
-	Width   int
-	Height  int
 }
