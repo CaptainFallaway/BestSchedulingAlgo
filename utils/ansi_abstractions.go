@@ -1,4 +1,4 @@
-package terminal
+package utils
 
 // \x1b[2J - Clear screen: Clears the entire screen.
 // \x1b[0;0H - Move cursor to the top-left corner.
