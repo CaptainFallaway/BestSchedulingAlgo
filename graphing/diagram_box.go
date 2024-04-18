@@ -4,10 +4,10 @@ import "math/rand"
 
 type DiagramBox struct{}
 
-var chars = []rune{'e', 't'}
+var chars = []rune{' ', '.'}
 
 func getRandomChar() rune {
-	return chars[rand.Intn(2)]
+	return chars[rand.Intn(3)%2]
 }
 
 func (d *DiagramBox) Render(size TSize, rs *chan TermPixel, syncer ISyncer) {
