@@ -7,7 +7,7 @@ type DiagramBox struct{}
 var chars = []rune{' ', '░', '▒', '▓', '█'}
 
 func getRandomChar() rune {
-	return chars[rand.Intn(15)%5]
+	return chars[rand.Intn(5)]
 }
 
 func (d *DiagramBox) Render(size TSize, ts chan TermPixel, syncer ISyncer) {
