@@ -53,7 +53,7 @@ func (tm *TerminalManger) Render() {
 		terminal.ClearScreen()
 	}
 
-	sizes := getSizes(len(tm.Components))
+	sizes := getSizes(len(tm.Components), width, height)
 
 	tm.RenderSync.Start(len(tm.Components), &pixelChannel)
 
