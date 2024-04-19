@@ -8,21 +8,23 @@ import (
 )
 
 type TerminalManger struct {
-	Components  []Renderable
-	Width       int
-	Height      int
-	FrontBuffer Buffer
-	BackBuffer  Buffer
+	Components []Renderable
+	CompCount  int
+	Width      int
+	Height     int
+	TermBuffer Buffer
+	RenderSync Syncer
 }
 
 func NewTerminalManager() *TerminalManger {
 	width, height := consolesize.GetConsoleSize()
 	return &TerminalManger{
-		Components:  []Renderable{},
-		Width:       width,
-		Height:      height,
-		FrontBuffer: *NewBuffer(width, height),
-		BackBuffer:  *NewBuffer(width, height),
+		Components: []Renderable{},
+		CompCount:  0,
+		Width:      0,
+		Height:     0,
+		TermBuffer: *NewBuffer(width, height),
+		RenderSync: Syncer{},
 	}
 }
 
@@ -30,42 +32,44 @@ func (tm *TerminalManger) AddComponent(c Renderable) {
 	tm.Components = append(tm.Components, c)
 }
 
-func CursorToPos(x, y int, char rune) {
-	fmt.Printf("\x1b[%d;%dH%c", y, x, char)
-}
-
 func (tm *TerminalManger) Render() {
-	width, height := consolesize.GetConsoleSize()
-	instructionChannel := make(chan TermPixel, width*height)
+	if len(tm.Components) == 0 {
+		return
+	}
 
-	tm.BackBuffer = *NewBuffer(width, height)
+	width, height := consolesize.GetConsoleSize()
+	pixelChannel := make(chan TermPixel, width*height)
+
+	if width != tm.Width || height != tm.Height {
+		tm.Width = width
+		tm.Height = height
+		tm.TermBuffer = *NewBuffer(width, height)
+		terminal.ClearScreen()
+	}
+
+	if len(tm.Components) != tm.CompCount {
+		tm.CompCount = len(tm.Components)
+		tm.TermBuffer = *NewBuffer(width, height)
+		terminal.ClearScreen()
+	}
 
 	sizes := getSizes(len(tm.Components))
 
-	syncer := NewSyncer(len(tm.Components), &instructionChannel)
+	tm.RenderSync.Start(len(tm.Components), &pixelChannel)
+
 	for i, c := range tm.Components {
-		go c.Render(sizes[i], &instructionChannel, syncer)
+		go c.Render(sizes[i], pixelChannel, &tm.RenderSync)
 	}
 
-	for inst := range instructionChannel {
-		tm.BackBuffer.Add(inst)
-	}
-}
+	instructions := ""
 
-func (tm *TerminalManger) Flush() {
-	if len(tm.FrontBuffer.BuffArr) != len(tm.BackBuffer.BuffArr) {
-		terminal.ClearScreen()
-		for _, tp := range tm.BackBuffer.BuffArr {
-			CursorToPos(tp.X, tp.Y, tp.Char)
-		}
-
-	} else {
-		for i, tp := range tm.BackBuffer.BuffArr {
-			if tp != tm.FrontBuffer.BuffArr[i] {
-				CursorToPos(tp.X, tp.Y, tp.Char)
-			}
+	for tp := range pixelChannel {
+		indx := ((tp.Y - 1) * width) + (tp.X - 1)
+		if tp != tm.TermBuffer.BuffArr[indx] {
+			tm.TermBuffer.BuffArr[indx] = tp
+			instructions += tp.ToAnsi()
 		}
 	}
 
-	tm.FrontBuffer = tm.BackBuffer
+	fmt.Print(instructions) // Might want to use Stdout.Write immediately instead
 }
