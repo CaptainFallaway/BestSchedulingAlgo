@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	os.Stdout.Sync()
+	os.Stdout.SyscallConn()
+
 	err := keyboard.Open()
 	if err != nil {
 		panic(err)
@@ -22,10 +23,26 @@ func main() {
 	tm := graphing.NewTerminalManager()
 
 	tm.AddComponent(&graphing.DiagramBox{})
-	tm.AddComponent(&graphing.DiagramBox{})
+
+	go func() {
+		for {
+			tm.Render()
+		}
+	}()
 
 	for {
-		tm.Render()
-		tm.Flush()
+		char, _, err := keyboard.GetSingleKey()
+
+		if err != nil {
+			panic(err)
+		}
+
+		if char == 'a' {
+			tm.AddComponent(&graphing.DiagramBox{})
+		}
+
+		if char == 'd' {
+			tm.Components = tm.Components[:len(tm.Components)-1]
+		}
 	}
 }
