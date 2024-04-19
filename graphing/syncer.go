@@ -8,25 +8,18 @@ type ISyncer interface {
 
 type Syncer struct {
 	wg sync.WaitGroup
-	c  *chan TermPixel
 }
 
-func NewSyncer(delta int, c *chan TermPixel) ISyncer {
-	t := Syncer{
-		wg: sync.WaitGroup{},
-		c:  c,
-	}
-
-	t.wg.Add(delta)
-	go t.loop()
-	return &t
+func (s *Syncer) Start(delta int, c *chan TermPixel) {
+	s.wg.Add(delta)
+	go s.loop(c)
 }
 
 func (s *Syncer) Done() {
 	s.wg.Done()
 }
 
-func (s *Syncer) loop() {
+func (s *Syncer) loop(c *chan TermPixel) {
 	s.wg.Wait()
-	close(*s.c)
+	close(*c)
 }
