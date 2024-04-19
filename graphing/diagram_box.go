@@ -4,10 +4,10 @@ import "math/rand"
 
 type DiagramBox struct{}
 
-var chars = []rune{' ', '█'}
+var chars = []rune{' ', '░', '▒', '▓', '█'}
 
 func getRandomChar() rune {
-	return chars[rand.Intn(2)]
+	return chars[rand.Intn(15)%5]
 }
 
 func (d *DiagramBox) Render(size TSize, ts chan TermPixel, syncer ISyncer) {
@@ -18,7 +18,7 @@ func (d *DiagramBox) Render(size TSize, ts chan TermPixel, syncer ISyncer) {
 
 	for r := 1; r < size.Height; r++ {
 		for c := 1; c < size.Width; c++ {
-			// randChar = getRandomChar()
+			randChar = getRandomChar()
 			char = getBorder(c, r, size.Width, size.Height, randChar)
 			ts <- TermPixel{Char: char, X: c + size.OffsetX, Y: r + size.OffsetY}
 		}
