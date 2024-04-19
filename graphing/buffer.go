@@ -18,17 +18,3 @@ func (b *Buffer) Add(tp TermPixel) {
 	indx := ((tp.Y - 1) * b.width) + (tp.X - 1)
 	b.BuffArr[indx] = tp
 }
-
-func (b Buffer) Diff(other *Buffer) []TermPixel {
-	if len(b.BuffArr) != len(other.BuffArr) {
-		return b.BuffArr
-	}
-
-	var diff []TermPixel
-	for i, tp := range b.BuffArr {
-		if tp != other.BuffArr[i] {
-			diff = append(diff, tp)
-		}
-	}
-	return diff
-}
