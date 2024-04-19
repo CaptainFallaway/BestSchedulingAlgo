@@ -1,7 +1,9 @@
 package graphing
 
+import "fmt"
+
 type Renderable interface {
-	Render(TSize, *chan TermPixel, ISyncer)
+	Render(TSize, chan TermPixel, ISyncer)
 }
 
 type RenderAcc struct {
@@ -18,4 +20,8 @@ type TermPixel struct {
 	Char rune
 	X    int
 	Y    int
+}
+
+func (tp TermPixel) ToAnsi() string {
+	return fmt.Sprintf("\x1b[%d;%dH%c", tp.Y, tp.X, tp.Char)
 }
