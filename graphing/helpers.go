@@ -1,23 +1,27 @@
 package graphing
 
-// TSize is a supposed to be a struct parsed to a components render function
-type TSize struct {
-	Width   int
-	Height  int
-	OffsetX int
-	OffsetY int
+import (
+	"fmt"
+	"time"
+)
+
+func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, int, int) {
+	return func(char rune, x, y int) {
+		if x < 0 || y < 0 || x >= size.Width || y >= size.Height {
+			panic(
+				fmt.Sprintf("Pixel out of bounds for one of the components: %d, %d, %d, %d",
+					x,
+					y,
+					size.Width,
+					size.Height,
+				),
+			) // TODO: Think of some way presenting the object that caused the error
+		}
+
+		pc <- TermPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1}
+	}
 }
 
-// This is not final solution, but it is a start
-// Just returning the computed width for each component
-func getSizes(elements, maxWidth, maxHeight int) []TSize {
-	sizes := make([]TSize, elements)
-
-	width := maxWidth / elements
-	height := maxHeight
-	for i := 0; i < elements; i++ {
-		sizes[i] = TSize{width + 1, height + 1, width * i, 0} // offset Y is always 0 for now
-	}
-
-	return sizes
+func timeNow() float64 {
+	return float64(time.Now().UnixNano())
 }

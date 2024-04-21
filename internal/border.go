@@ -1,4 +1,4 @@
-package graphing
+package internal
 
 import (
 	"github.com/CaptainFallaway/BestSchedulingAlgo/utils"
@@ -14,22 +14,22 @@ var Border = utils.Borders{
 }
 
 func getBorder(c, r, width, height int, char rune) rune {
-	if c == 1 && r == 1 {
+	if c == 0 && r == 0 {
 		return Border.TopLeft
 	}
-	if c == width-1 && r == 1 {
+	if c == width-1 && r == 0 {
 		return Border.TopRight
 	}
-	if c == 1 && r == height-1 {
+	if c == 0 && r == height-1 {
 		return Border.BottomLeft
 	}
 	if c == width-1 && r == height-1 {
 		return Border.BottomRight
 	}
-	if r == 1 || r == height-1 {
+	if r == 0 || r == height-1 {
 		return Border.Horizontal
 	}
-	if c == 1 || c == width-1 {
+	if c == 0 || c == width-1 {
 		return Border.Vertical
 	}
 	return char

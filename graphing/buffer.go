@@ -14,7 +14,12 @@ func NewBuffer(w, h int) *Buffer {
 	}
 }
 
-func (b *Buffer) Add(tp TermPixel) {
+func (b *Buffer) Set(tp TermPixel) {
 	indx := ((tp.Y - 1) * b.width) + (tp.X - 1)
 	b.BuffArr[indx] = tp
+}
+
+func (b *Buffer) Get(x, y int) TermPixel {
+	indx := ((y - 1) * b.width) + (x - 1)
+	return b.BuffArr[indx]
 }

@@ -1,14 +1,21 @@
 package main
 
 import (
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/internal"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/utils"
 	"github.com/eiannone/keyboard"
 )
 
 func main() {
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
+
 	os.Stdout.SyscallConn()
 
 	err := keyboard.Open()
@@ -22,7 +29,23 @@ func main() {
 
 	tm := graphing.NewTerminalManager()
 
-	tm.AddComponent(&graphing.DiagramBox{})
+	tm.AddRow()
+
+	tm.AddRenderable(&internal.DiagramBox{}, 0, 3)
+	tm.AddRenderable(&internal.DiagramBox{}, 0)
+	tm.AddRenderable(&internal.DiagramBox{}, 0)
+
+	tm.AddRow(3)
+
+	tm.AddRenderable(&internal.DiagramBox{}, 1)
+
+	tm.AddRow()
+
+	tm.AddRenderable(&internal.DiagramBox{}, 2)
+
+	tm.AddRow()
+
+	tm.AddRenderable(&internal.DiagramBox{}, 3)
 
 	go func() {
 		for {
@@ -31,18 +54,17 @@ func main() {
 	}()
 
 	for {
-		char, _, err := keyboard.GetSingleKey()
-
+		char, key, err := keyboard.GetKey()
 		if err != nil {
 			panic(err)
 		}
 
-		if char == 'a' {
-			tm.AddComponent(&graphing.DiagramBox{})
+		if key == keyboard.KeyEsc {
+			tm.Layout.AddRenderable(&internal.DiagramBox{}, 3, 2)
 		}
 
-		if char == 'd' {
-			tm.Components = tm.Components[:len(tm.Components)-1]
+		if char == 'q' {
+			break
 		}
 	}
 }

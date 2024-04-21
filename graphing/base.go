@@ -2,16 +2,24 @@ package graphing
 
 import "fmt"
 
+type PixelSender func(rune, int, int)
+
 type Renderable interface {
-	Render(TSize, chan TermPixel, ISyncer)
+	Render(CompDimensions, PixelSender, ISyncer)
 }
 
-type RenderAcc struct {
-	Content []TermPixel
+// A components dimensions passed to a objects render function
+type CompDimensions struct {
+	Width  int
+	Height int
 }
 
-func (ra *RenderAcc) Append(r TermPixel) {
-	ra.Content = append(ra.Content, r)
+// A components position on the screen
+type componentBounds struct {
+	Width   int
+	Height  int
+	OffsetX int
+	OffsetY int
 }
 
 // In the future pixels should either be ANSI instructions with pos

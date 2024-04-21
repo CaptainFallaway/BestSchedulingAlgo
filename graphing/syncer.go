@@ -16,7 +16,8 @@ func (s *Syncer) Start(delta int, c *chan TermPixel) {
 }
 
 func (s *Syncer) Done() {
-	s.wg.Done()
+	// Inline sync done call, removing overhead of a function call
+	s.wg.Add(-1)
 }
 
 func (s *Syncer) loop(c *chan TermPixel) {
