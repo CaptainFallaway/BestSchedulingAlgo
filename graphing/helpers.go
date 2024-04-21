@@ -25,3 +25,12 @@ func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, i
 func timeNow() float64 {
 	return float64(time.Now().UnixNano())
 }
+
+// Helper function since i do the exact same thing in two places
+func getSpan(span ...int) int {
+	if len(span) >= 1 {
+		return span[0]
+	}
+
+	return 1
+}

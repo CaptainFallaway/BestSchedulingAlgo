@@ -61,15 +61,6 @@ func (l *Layout) CalcSizes(twidth, theight int) {
 	}
 }
 
-// Helper function since i do the exact same thing in two places
-func getSpan(span ...int) int {
-	if len(span) >= 1 {
-		return span[0]
-	}
-
-	return 1
-}
-
 func (l *Layout) AddRow(rowSpan ...int) {
 	span := getSpan(rowSpan...)
 
