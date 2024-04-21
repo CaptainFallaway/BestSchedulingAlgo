@@ -5,7 +5,10 @@ import "fmt"
 type PixelSender func(rune, int, int)
 
 type Renderable interface {
-	Render(CompDimensions, PixelSender, ISyncer)
+	// This method is called every cycle to render the component
+	// The arguments should look like:
+	// Render(delta int64, size CompDimensions, ps PixelSender, syncer ISyncer)
+	Render(int64, CompDimensions, PixelSender, ISyncer)
 }
 
 // A components dimensions passed to a objects render function

@@ -3,6 +3,7 @@ package graphing
 import (
 	"os"
 	"strings"
+	"time"
 
 	terminal "github.com/CaptainFallaway/BestSchedulingAlgo/utils"
 	"github.com/nathan-fiscaletti/consolesize-go"
@@ -18,7 +19,7 @@ type TerminalManger struct {
 	TermBuffer Buffer
 	RenderSync Syncer
 
-	delta float64
+	delta int64
 }
 
 func NewTerminalManager() *TerminalManger {
@@ -29,11 +30,12 @@ func NewTerminalManager() *TerminalManger {
 		Height:     height,
 		TermBuffer: *NewBuffer(width, height),
 		RenderSync: Syncer{},
-		delta:      timeNow(),
 	}
 }
 
 func (tm *TerminalManger) Render() {
+	start := time.Now()
+
 	width, height := consolesize.GetConsoleSize()
 	pixelChannel := make(chan TermPixel, width*height)
 
@@ -54,7 +56,7 @@ func (tm *TerminalManger) Render() {
 	tm.RenderSync.Start(len(tm.Layout.Items), &pixelChannel)
 
 	for _, item := range tm.Layout.Items {
-		go item.Renderable.Render(item.Dimensions, constructChanSendFunc(pixelChannel, item.Bounds), &tm.RenderSync)
+		go item.Renderable.Render(tm.delta, item.Dimensions, constructChanSendFunc(pixelChannel, item.Bounds), &tm.RenderSync)
 	}
 
 	instructions := strings.Builder{}
@@ -69,4 +71,6 @@ func (tm *TerminalManger) Render() {
 	}
 
 	os.Stdout.WriteString(instructions.String())
+
+	tm.delta = time.Since(start).Milliseconds()
 }

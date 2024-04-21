@@ -10,10 +10,10 @@ type DiagramBox struct {
 	something int
 	target    int
 	climax    bool
-	ticks     int
+	ticks     int64
 }
 
-func (d *DiagramBox) Render(size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
+func (d *DiagramBox) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
 	defer syncer.Done()
 
 	var char rune
@@ -33,17 +33,17 @@ func (d *DiagramBox) Render(size graphing.CompDimensions, ps graphing.PixelSende
 	}
 
 	if d.something < d.target {
-		if d.ticks == 200 {
+		if d.ticks > 10 {
 			d.something++
 			d.ticks = 0
 		}
 	} else {
-		if d.ticks == 200 {
+		if d.ticks > 10 {
 			d.something--
 			d.climax = true
 			d.ticks = 0
 		}
 	}
 
-	d.ticks++
+	d.ticks += delta
 }
