@@ -7,5 +7,5 @@
 - [ ] Refactor and change names - add comments also - Make project more documented
 - [ ] make building the ui experience better
 - [ ] Use Sync.Pool in places where it should be to help with the GC overhead
-- [ ] Add a delta for each render cycle that will be parsed to the "Render" functions
+- [x] Add a delta for each render cycle that will be parsed to the "Render" functions
 - [ ] Not a string builder ffs, do something with bytes, remove more overhead :D
