@@ -73,6 +73,8 @@ func (tm *TerminalManger) Render() {
 		if tp != buffItem && !(buffItem.Char == 0 && tp.Char == ' ') {
 			tm.termBuffer.Set(tp)
 			instructions.WriteString(tp.toAnsi())
+			// os.Stdout.WriteString(tp.toAnsi())
+			// time.Sleep(time.Nanosecond)
 		}
 	}
 

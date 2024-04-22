@@ -6,14 +6,14 @@ import (
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
 )
 
-type DiagramBox struct {
+type Testing struct {
 	something int
 	target    int
 	climax    bool
 	ticks     int64
 }
 
-func (d *DiagramBox) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
+func (d *Testing) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
 	defer syncer.Done()
 
 	var char rune
