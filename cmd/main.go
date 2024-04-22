@@ -26,7 +26,7 @@ func main() {
 	inputComp := internal.InputBox{}
 
 	tm.Row().Col(&inputComp)
-	tm.Row(4).Col(&internal.DiagramBox{}, 2).Col(&internal.DiagramBox{})
+	tm.Row(4).Col(&internal.DiagramBox{}).Col(&internal.DiagramBox{}).Col(&internal.DiagramBox{})
 
 	go func() {
 		for {

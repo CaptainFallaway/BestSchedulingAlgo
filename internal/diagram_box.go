@@ -28,7 +28,7 @@ func (d *DiagramBox) Render(delta int64, size graphing.CompDimensions, ps graphi
 			} else {
 				char = ' '
 			}
-			ps(getBorder(c, r, size.Width, size.Height, char), c, r, graphing.FgMagenta, graphing.Bold)
+			ps(getBorder(c, r, size.Width, size.Height, char), c, r)
 		}
 	}
 
