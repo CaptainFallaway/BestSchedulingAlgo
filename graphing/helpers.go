@@ -2,6 +2,7 @@ package graphing
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -34,4 +35,12 @@ func getSpan(span ...int) int {
 	}
 
 	return 1
+}
+
+func clearScreen() {
+	os.Stdout.WriteString("\x1b[2J")
+}
+
+func hideCursor() {
+	os.Stdout.WriteString("\x1b[?25l")
 }
