@@ -3,7 +3,6 @@ package graphing
 import (
 	"fmt"
 	"strings"
-	"time"
 )
 
 func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, int, int, ...AnsiOption) {
@@ -26,10 +25,6 @@ func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, i
 
 		pc <- TermPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1, ansiOpts: sb.String()}
 	}
-}
-
-func timeNow() float64 {
-	return float64(time.Now().UnixNano())
 }
 
 // Helper function since i do the exact same thing in two places
