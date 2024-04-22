@@ -6,6 +6,6 @@
 - [x] Move diagram_box and border out of the graphing dir
 - [ ] Rename graphing dir to "terminal renderer"
 - [ ] Refactor and change names - add comments also - Make project more documented
-- [ ] make building the ui experience better
+- [x] make building the ui experience better
 - [ ] Use Sync.Pool in places where it should be to help with the GC overhead
 - [x] Add a delta for each render cycle that will be parsed to the "Render" functions
