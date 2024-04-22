@@ -20,20 +20,24 @@ type TerminalManger struct {
 
 	delta         int64
 	previousFrame time.Time
+
+	// Thousand FPS mode
+	thousandFpsMode bool
 }
 
-func NewTerminalManager() *TerminalManger {
+func NewTerminalManager(thousandFpsMode bool) *TerminalManger {
 	hideCursor()
 	clearScreen()
 
 	width, height := consolesize.GetConsoleSize()
 
 	return &TerminalManger{
-		Layout:     Layout{},
-		width:      width,
-		height:     height,
-		termBuffer: *NewBuffer(width, height),
-		renderSync: syncer{},
+		Layout:          Layout{},
+		width:           width,
+		height:          height,
+		termBuffer:      *NewBuffer(width, height),
+		renderSync:      syncer{},
+		thousandFpsMode: thousandFpsMode,
 	}
 }
 
@@ -76,4 +80,8 @@ func (tm *TerminalManger) Render() {
 
 	tm.delta = time.Since(tm.previousFrame).Milliseconds()
 	tm.previousFrame = time.Now()
+
+	if !tm.thousandFpsMode {
+		time.Sleep(10 * time.Millisecond)
+	}
 }
