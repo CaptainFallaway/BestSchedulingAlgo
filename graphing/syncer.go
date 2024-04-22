@@ -10,7 +10,7 @@ type Syncer struct {
 	wg sync.WaitGroup
 }
 
-func (s *Syncer) start(delta int, c *chan TermPixel) {
+func (s *Syncer) start(delta int, c *chan termPixel) {
 	s.wg.Add(delta)
 	go s.waiter(c)
 }
@@ -21,7 +21,7 @@ func (s *Syncer) Done() {
 	s.wg.Add(-1)
 }
 
-func (s *Syncer) waiter(c *chan TermPixel) {
+func (s *Syncer) waiter(c *chan termPixel) {
 	s.wg.Wait()
 	close(*c)
 }

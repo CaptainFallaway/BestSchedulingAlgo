@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, int, int, ...AnsiOption) {
+func constructChanSendFunc(pc chan termPixel, size componentBounds) func(rune, int, int, ...AnsiOption) {
 	return func(char rune, x, y int, ansiopts ...AnsiOption) {
 		if x < 0 || y < 0 || x >= size.Width || y >= size.Height {
 			panic(
@@ -24,7 +24,7 @@ func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, i
 			sb.WriteString(string(opt))
 		}
 
-		pc <- TermPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1, ansiOpts: sb.String()}
+		pc <- termPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1, ansiOpts: sb.String()}
 	}
 }
 

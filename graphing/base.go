@@ -28,14 +28,14 @@ type componentBounds struct {
 
 // In the future pixels should either be ANSI instructions with pos
 // and with or with other ANSI attributes
-type TermPixel struct {
+type termPixel struct {
 	Char     rune
 	X        int
 	Y        int
 	ansiOpts string
 }
 
-func (tp TermPixel) ToAnsi() string {
+func (tp termPixel) ToAnsi() string {
 	return fmt.Sprintf("%s\x1b[%d;%dH%c\x1b[0m", tp.ansiOpts, tp.Y, tp.X, tp.Char)
 }
 

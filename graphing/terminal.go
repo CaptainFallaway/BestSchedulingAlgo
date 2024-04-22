@@ -39,7 +39,7 @@ func NewTerminalManager() *TerminalManger {
 
 func (tm *TerminalManger) Render() {
 	width, height := consolesize.GetConsoleSize()
-	pixelChannel := make(chan TermPixel, width*height)
+	pixelChannel := make(chan termPixel, width*height)
 
 	if width != tm.width || height != tm.height {
 		tm.Layout.CalcSizes(width, height)
