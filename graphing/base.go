@@ -4,15 +4,12 @@ import (
 	"fmt"
 )
 
-type PixelSender func(rune, int, int, ...AnsiOption)
+type PixelSender func(char rune, x int, y int, ansiOpts ...AnsiOption)
 
 type AnsiOption string
 
 type Renderable interface {
-	// This method is called every cycle to render the component
-	// The arguments should look like:
-	// Render(delta int64, size CompDimensions, ps PixelSender, syncer ISyncer)
-	Render(int64, CompDimensions, PixelSender, ISyncer)
+	Render(delta int64, dimensions CompDimensions, ps PixelSender, sync ISyncer)
 }
 
 // A components dimensions passed to a objects render function
