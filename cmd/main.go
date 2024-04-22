@@ -7,7 +7,6 @@ import (
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/internal"
-	"github.com/CaptainFallaway/BestSchedulingAlgo/utils"
 	"github.com/eiannone/keyboard"
 )
 
@@ -23,9 +22,6 @@ func main() {
 		panic(err)
 	}
 	defer keyboard.Close()
-
-	utils.HideCursor()
-	utils.ClearScreen()
 
 	tm := graphing.NewTerminalManager()
 

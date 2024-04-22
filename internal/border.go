@@ -1,10 +1,15 @@
 package internal
 
-import (
-	"github.com/CaptainFallaway/BestSchedulingAlgo/utils"
-)
+type Borders struct {
+	TopLeft     rune
+	TopRight    rune
+	BottomLeft  rune
+	BottomRight rune
+	Horizontal  rune
+	Vertical    rune
+}
 
-var Border = utils.Borders{
+var Border = Borders{
 	TopLeft:     '┌',
 	TopRight:    '┐',
 	BottomLeft:  '└',
