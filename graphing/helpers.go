@@ -2,11 +2,12 @@ package graphing
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
-func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, int, int) {
-	return func(char rune, x, y int) {
+func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, int, int, ...AnsiOption) {
+	return func(char rune, x, y int, ansiopts ...AnsiOption) {
 		if x < 0 || y < 0 || x >= size.Width || y >= size.Height {
 			panic(
 				fmt.Sprintf("Pixel out of bounds for one of the components: %d, %d, %d, %d",
@@ -18,7 +19,12 @@ func constructChanSendFunc(pc chan TermPixel, size componentBounds) func(rune, i
 			) // TODO: Think of some way presenting the object that caused the error
 		}
 
-		pc <- TermPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1}
+		sb := strings.Builder{}
+		for _, opt := range ansiopts {
+			sb.WriteString(string(opt))
+		}
+
+		pc <- TermPixel{Char: char, X: x + size.OffsetX + 1, Y: y + size.OffsetY + 1, ansiOpts: sb.String()}
 	}
 }
 
