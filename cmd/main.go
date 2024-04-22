@@ -27,6 +27,7 @@ func main() {
 
 	tm.Row().Col(&internal.DiagramBox{})
 	tm.Row(2).Col(&internal.DiagramBox{}, 2).Col(&internal.DiagramBox{})
+	tm.Row(3).Col(&internal.DiagramBox{}, 1).Col(&internal.DiagramBox{}, 4)
 
 	go func() {
 		for {
