@@ -15,8 +15,8 @@ type TerminalManger struct {
 	width  int
 	height int
 
-	termBuffer Buffer
-	renderSync Syncer
+	termBuffer buffer
+	renderSync syncer
 
 	delta         int64
 	previousFrame time.Time
@@ -33,7 +33,7 @@ func NewTerminalManager() *TerminalManger {
 		width:      width,
 		height:     height,
 		termBuffer: *NewBuffer(width, height),
-		renderSync: Syncer{},
+		renderSync: syncer{},
 	}
 }
 
@@ -68,7 +68,7 @@ func (tm *TerminalManger) Render() {
 
 		if tp != buffItem && !(buffItem.Char == 0 && tp.Char == ' ') {
 			tm.termBuffer.Set(tp)
-			instructions.WriteString(tp.ToAnsi())
+			instructions.WriteString(tp.toAnsi())
 		}
 	}
 

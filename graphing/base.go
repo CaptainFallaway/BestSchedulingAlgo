@@ -35,7 +35,7 @@ type termPixel struct {
 	ansiOpts string
 }
 
-func (tp termPixel) ToAnsi() string {
+func (tp termPixel) toAnsi() string {
 	return fmt.Sprintf("%s\x1b[%d;%dH%c\x1b[0m", tp.ansiOpts, tp.Y, tp.X, tp.Char)
 }
 
