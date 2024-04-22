@@ -1,5 +1,9 @@
 package graphing
 
+type ColumnInterface interface {
+	Col(renderable Renderable, colSpan ...int) ColumnInterface
+}
+
 type renderableItem struct {
 	Renderable Renderable
 	Bounds     componentBounds
@@ -61,7 +65,7 @@ func (l *Layout) CalcSizes(twidth, theight int) {
 	}
 }
 
-func (l *Layout) AddRow(rowSpan ...int) {
+func (l *Layout) Row(rowSpan ...int) ColumnInterface {
 	span := getSpan(rowSpan...)
 
 	l.totalRowSpans += span
@@ -69,15 +73,21 @@ func (l *Layout) AddRow(rowSpan ...int) {
 	l.rows = append(l.rows, row{
 		rowSpan: span,
 	})
+
+	return ColumnAdder{l, len(l.rows) - 1}
 }
 
-// The default spans are 1, 1 (row, col) is hos they should be parsed as parameters
-func (l *Layout) AddRenderable(renderable Renderable, rowIndx int, colSpan ...int) {
-	if rowIndx < 0 {
+type ColumnAdder struct {
+	l       *Layout
+	rowIndx int
+}
+
+// colSpan is the number of columns this renderable should span, default is 1 if not provided
+func (ca ColumnAdder) Col(renderable Renderable, colSpan ...int) ColumnInterface {
+	if ca.rowIndx < 0 {
 		panic("rowIndx cannot be less than 0")
 	}
 
-	// Make a helper function for this
 	span := getSpan(colSpan...)
 
 	temp := colItem{
@@ -85,7 +95,9 @@ func (l *Layout) AddRenderable(renderable Renderable, rowIndx int, colSpan ...in
 		renderable,
 	}
 
-	l.rows[rowIndx].cols = append(l.rows[rowIndx].cols, temp)
-	l.rows[rowIndx].totalColSpans += span
-	l.ItemsCount++
+	ca.l.rows[ca.rowIndx].cols = append(ca.l.rows[ca.rowIndx].cols, temp)
+	ca.l.rows[ca.rowIndx].totalColSpans += span
+	ca.l.ItemsCount++
+
+	return ca
 }

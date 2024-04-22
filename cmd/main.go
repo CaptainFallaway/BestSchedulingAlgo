@@ -29,23 +29,8 @@ func main() {
 
 	tm := graphing.NewTerminalManager()
 
-	tm.AddRow()
-
-	tm.AddRenderable(&internal.DiagramBox{}, 0, 3)
-	tm.AddRenderable(&internal.DiagramBox{}, 0)
-	tm.AddRenderable(&internal.DiagramBox{}, 0)
-
-	tm.AddRow(3)
-
-	tm.AddRenderable(&internal.DiagramBox{}, 1)
-
-	tm.AddRow()
-
-	tm.AddRenderable(&internal.DiagramBox{}, 2)
-
-	tm.AddRow()
-
-	tm.AddRenderable(&internal.DiagramBox{}, 3)
+	tm.Row().Col(&internal.DiagramBox{})
+	tm.Row(2).Col(&internal.DiagramBox{}, 2).Col(&internal.DiagramBox{})
 
 	go func() {
 		for {
@@ -54,13 +39,9 @@ func main() {
 	}()
 
 	for {
-		char, key, err := keyboard.GetKey()
+		char, _, err := keyboard.GetKey()
 		if err != nil {
 			panic(err)
-		}
-
-		if key == keyboard.KeyEsc {
-			tm.Layout.AddRenderable(&internal.DiagramBox{}, 3, 2)
 		}
 
 		if char == 'q' {
