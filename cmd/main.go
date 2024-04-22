@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	_ "net/http/pprof"
-	"os"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/internal"
@@ -11,11 +10,10 @@ import (
 )
 
 func main() {
+	// This is for profiling the application
 	go func() {
 		http.ListenAndServe("localhost:6060", nil)
 	}()
-
-	os.Stdout.SyscallConn()
 
 	err := keyboard.Open()
 	if err != nil {
@@ -25,9 +23,10 @@ func main() {
 
 	tm := graphing.NewTerminalManager()
 
-	tm.Row().Col(&internal.DiagramBox{})
-	tm.Row(2).Col(&internal.DiagramBox{}, 2).Col(&internal.DiagramBox{})
-	tm.Row(3).Col(&internal.DiagramBox{}, 1).Col(&internal.DiagramBox{}, 4)
+	inputComp := internal.InputBox{}
+
+	tm.Row().Col(&inputComp)
+	tm.Row(4).Col(&internal.DiagramBox{}, 2).Col(&internal.DiagramBox{})
 
 	go func() {
 		for {
@@ -36,13 +35,26 @@ func main() {
 	}()
 
 	for {
-		char, _, err := keyboard.GetKey()
+		char, key, err := keyboard.GetKey()
 		if err != nil {
 			panic(err)
 		}
 
-		if char == 'q' {
-			break
+		switch key {
+		case 0:
+			inputComp.Insert(char)
+		case keyboard.KeyBackspace:
+			inputComp.Backspace()
+		case keyboard.KeySpace:
+			inputComp.Insert(' ')
+		case keyboard.KeyArrowLeft:
+			inputComp.CursorLeft()
+		case keyboard.KeyArrowRight:
+			inputComp.CursorRight()
+		case keyboard.KeyHome:
+			inputComp.Home()
+		case keyboard.KeyEnd:
+			inputComp.End()
 		}
 	}
 }
