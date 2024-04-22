@@ -19,7 +19,8 @@ type TerminalManger struct {
 	TermBuffer Buffer
 	RenderSync Syncer
 
-	delta int64
+	delta         int64
+	previousFrame time.Time
 }
 
 func NewTerminalManager() *TerminalManger {
@@ -34,8 +35,6 @@ func NewTerminalManager() *TerminalManger {
 }
 
 func (tm *TerminalManger) Render() {
-	start := time.Now()
-
 	width, height := consolesize.GetConsoleSize()
 	pixelChannel := make(chan TermPixel, width*height)
 
@@ -72,5 +71,6 @@ func (tm *TerminalManger) Render() {
 
 	os.Stdout.WriteString(instructions.String())
 
-	tm.delta = time.Since(start).Milliseconds()
+	tm.delta = time.Since(tm.previousFrame).Milliseconds()
+	tm.previousFrame = time.Now()
 }
