@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	terminal "github.com/CaptainFallaway/BestSchedulingAlgo/utils"
 	"github.com/nathan-fiscaletti/consolesize-go"
 )
 
@@ -13,24 +12,28 @@ type TerminalManger struct {
 	Layout
 
 	// Previous size of the terminal
-	Width  int
-	Height int
+	width  int
+	height int
 
-	TermBuffer Buffer
-	RenderSync Syncer
+	termBuffer Buffer
+	renderSync Syncer
 
 	delta         int64
 	previousFrame time.Time
 }
 
 func NewTerminalManager() *TerminalManger {
+	hideCursor()
+	clearScreen()
+
 	width, height := consolesize.GetConsoleSize()
+
 	return &TerminalManger{
 		Layout:     Layout{},
-		Width:      width,
-		Height:     height,
-		TermBuffer: *NewBuffer(width, height),
-		RenderSync: Syncer{},
+		width:      width,
+		height:     height,
+		termBuffer: *NewBuffer(width, height),
+		renderSync: Syncer{},
 	}
 }
 
@@ -38,33 +41,33 @@ func (tm *TerminalManger) Render() {
 	width, height := consolesize.GetConsoleSize()
 	pixelChannel := make(chan TermPixel, width*height)
 
-	if width != tm.Width || height != tm.Height {
+	if width != tm.width || height != tm.height {
 		tm.Layout.CalcSizes(width, height)
-		tm.Width = width
-		tm.Height = height
-		tm.TermBuffer = *NewBuffer(width, height)
-		terminal.ClearScreen()
+		tm.width = width
+		tm.height = height
+		tm.termBuffer = *NewBuffer(width, height)
+		clearScreen()
 	}
 
 	if len(tm.Layout.Items) != tm.Layout.ItemsCount {
 		tm.Layout.CalcSizes(width, height)
-		tm.TermBuffer = *NewBuffer(width, height)
-		terminal.ClearScreen()
+		tm.termBuffer = *NewBuffer(width, height)
+		clearScreen()
 	}
 
-	tm.RenderSync.Start(len(tm.Layout.Items), &pixelChannel)
+	tm.renderSync.start(len(tm.Layout.Items), &pixelChannel)
 
 	for _, item := range tm.Layout.Items {
-		go item.Renderable.Render(tm.delta, item.Dimensions, constructChanSendFunc(pixelChannel, item.Bounds), &tm.RenderSync)
+		go item.Renderable.Render(tm.delta, item.Dimensions, constructChanSendFunc(pixelChannel, item.Bounds), &tm.renderSync)
 	}
 
 	instructions := strings.Builder{}
 
 	for tp := range pixelChannel {
-		buffItem := tm.TermBuffer.Get(tp.X, tp.Y)
+		buffItem := tm.termBuffer.Get(tp.X, tp.Y)
 
 		if tp != buffItem && !(buffItem.Char == 0 && tp.Char == ' ') {
-			tm.TermBuffer.Set(tp)
+			tm.termBuffer.Set(tp)
 			instructions.WriteString(tp.ToAnsi())
 		}
 	}
