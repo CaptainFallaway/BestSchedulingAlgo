@@ -1,4 +1,4 @@
-package internal
+package components
 
 type Borders struct {
 	TopLeft     rune
@@ -9,6 +9,8 @@ type Borders struct {
 	Vertical    rune
 }
 
+// ═║╔╗╚╝
+// ┌┐└┘─│
 var Border = Borders{
 	TopLeft:     '┌',
 	TopRight:    '┐',

@@ -1,6 +1,7 @@
-package internal
+package components
 
 import (
+	"slices"
 	"strings"
 	"sync"
 
@@ -45,6 +46,7 @@ func (s *SavedText) Render(delta int64, size graphing.CompDimensions, ps graphin
 	defer syncer.Done()
 
 	rows := s.getRows()
+	slices.Reverse(rows)
 
 	// Render the border
 	for r := 0; r < size.Height; r++ {

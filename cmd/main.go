@@ -3,10 +3,9 @@ package main
 import (
 	"net/http"
 	_ "net/http/pprof"
-	"time"
 
+	"github.com/CaptainFallaway/BestSchedulingAlgo/components"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
-	"github.com/CaptainFallaway/BestSchedulingAlgo/internal"
 	"github.com/eiannone/keyboard"
 )
 
@@ -31,29 +30,18 @@ func main() {
 	// The terminal stuff
 	tm := graphing.NewTerminalManager(true)
 
-	inputComp := internal.InputBox{}
-	fpsComp := internal.FpsBox{}
-	textSaving := internal.SavedText{}
-	diagram1 := internal.Diagram{Out: &textSaving}
-	// testingComp := internal.Testing{}
+	inputComp := components.InputBox{}
+	cpuDiagram1 := components.Diagram{DiagramName: "CPU 1"}
+	cpuDiagram2 := components.Diagram{DiagramName: "CPU 2"}
+	cpuDiagram3 := components.Diagram{DiagramName: "CPU 3"}
 
-	tm.Row().Col(&inputComp, 5).Col(&fpsComp)
-	tm.Row(4).Col(&diagram1).Col(&diagram1).Col(&textSaving)
+	tm.Row().Col(&inputComp, 5)
+	tm.Row(4).Col(&cpuDiagram1).Col(&cpuDiagram2).Col(&cpuDiagram3)
 
 	// The render loop
 	go func() {
-		c := 0
-		t := time.Now()
-
 		for {
 			tm.Render()
-			c++
-
-			if time.Since(t) > time.Second {
-				fpsComp.Fps = c
-				c = 0
-				t = time.Now()
-			}
 		}
 	}()
 
@@ -82,8 +70,9 @@ func main() {
 		case keyboard.KeyEnter:
 			input := inputComp.GetInput()
 
-			textSaving.AddRow(input)
-			diagram1.SetValues(input)
+			cpuDiagram1.SetValues(input)
+			cpuDiagram2.SetValues(input)
+			cpuDiagram3.SetValues(input)
 
 			inputComp.Clear()
 		}

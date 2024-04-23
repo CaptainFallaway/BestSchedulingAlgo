@@ -1,4 +1,4 @@
-package internal
+package components
 
 import "github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
 
@@ -9,12 +9,20 @@ type Stack[T graphing.AnsiOption | int] struct {
 func NewColorStack() *Stack[graphing.AnsiOption] {
 	return &Stack[graphing.AnsiOption]{
 		Arr: []graphing.AnsiOption{
-			graphing.FgBlue,
 			graphing.FgRed,
 			graphing.FgGreen,
 			graphing.FgYellow,
+			graphing.FgBlue,
 			graphing.FgMagenta,
 			graphing.FgCyan,
+			graphing.FgLightGray,
+			graphing.FgDarkGray,
+			graphing.FgBrightRed,
+			graphing.FgBrightGreen,
+			graphing.FgBrightYellow,
+			graphing.FgBrightBlue,
+			graphing.FgBrightMagenta,
+			graphing.FgBrightCyan,
 			graphing.FgWhite,
 		},
 	}

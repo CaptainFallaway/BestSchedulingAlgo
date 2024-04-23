@@ -1,4 +1,4 @@
-package internal
+package components
 
 import (
 	"fmt"
@@ -18,6 +18,9 @@ func (f *FpsBox) Render(delta int64, size graphing.CompDimensions, ps graphing.P
 	}
 
 	halfSize := size.Height / 2
+	if size.Height%2 == 0 {
+		halfSize--
+	}
 
 	for r := 0; r < size.Height; r++ {
 		for c := 0; c < size.Width; c++ {
@@ -28,7 +31,7 @@ func (f *FpsBox) Render(delta int64, size graphing.CompDimensions, ps graphing.P
 		}
 	}
 
-	fpsRunes := []rune("      FPS: ")
+	fpsRunes := []rune(" FPS: ")
 
 	for i, r := range fpsRunes {
 		ps(r, i+1, halfSize)
