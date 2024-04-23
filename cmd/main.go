@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/components"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
@@ -28,24 +29,37 @@ func main() {
 	defer keyboard.Close()
 
 	// The terminal stuff
-	tm := graphing.NewTerminalManager(true)
+	tm := graphing.NewTerminalManager(false)
 
+	fpsBox := components.FpsBox{}
 	inputComp := components.InputBox{}
 	cpuDiagram1 := components.Diagram{DiagramName: "CPU 1"}
 	cpuDiagram2 := components.Diagram{DiagramName: "CPU 2"}
 	cpuDiagram3 := components.Diagram{DiagramName: "CPU 3"}
 
-	tm.Row().Col(&inputComp, 5)
+	tm.Row().Col(&inputComp, 5).Col(&fpsBox)
 	tm.Row(4).Col(&cpuDiagram1).Col(&cpuDiagram2).Col(&cpuDiagram3)
 
-	// The render loop
+	// tm.Start()
+	// on := true
+
+	// In all reality dont use this way of doing the render loop
 	go func() {
+		c := 0
+		t := time.Now()
+
 		for {
 			tm.Render()
+			c++
+
+			if time.Since(t).Seconds() >= 1 {
+				fpsBox.Fps = c
+				t = time.Now()
+				c = 0
+			}
 		}
 	}()
 
-	// The main loop / input loop
 	for {
 		char, key, err := keyboard.GetKey()
 		if err != nil {
@@ -70,11 +84,19 @@ func main() {
 		case keyboard.KeyEnter:
 			input := inputComp.GetInput()
 
-			cpuDiagram1.SetValues(input)
-			cpuDiagram2.SetValues(input)
-			cpuDiagram3.SetValues(input)
+			cpuDiagram1.TestSetValues(input)
+			cpuDiagram2.TestSetValues(input)
+			cpuDiagram3.TestSetValues(input)
 
 			inputComp.Clear()
+			// case keyboard.KeyEsc:
+			// 	if on {
+			// 		tm.Stop()
+			// 	} else {
+			// 		tm.Start()
+			// 	}
+
+			// 	on = !on
 		}
 	}
 }

@@ -18,7 +18,7 @@ type Diagram struct {
 	Labels [][]rune
 }
 
-func (d *Diagram) SetValues(inpt string) {
+func (d *Diagram) TestSetValues(inpt string) {
 	sNums := strings.Split(inpt, " ")
 	nums := make([]float64, 0, len(sNums))
 
@@ -34,6 +34,13 @@ func (d *Diagram) SetValues(inpt string) {
 	defer d.m.Unlock()
 
 	d.Values = nums
+}
+
+func (d *Diagram) UpdateValues(vals []float64) {
+	d.m.Lock()
+	defer d.m.Unlock()
+
+	d.Values = vals
 }
 
 func (d *Diagram) GetValues() []float64 {
@@ -102,13 +109,15 @@ func sum(values []float64) float64 {
 	return sum
 }
 
-// getDiagramPixelCounts returns a slice of integers that represent the number of pixels each value should take up in the diagram.
+// getDiagramPixelCounts returns a slice that contains counts,
+// and these counts are the pixels on the screen that represent the value.
 func getDiagramPixelCounts(values []float64, frameSize int) []int {
 	arr := make([]int, 0, len(values))
 
 	sumValues := sum(values)
 
 	for _, val := range values {
+		// get change factor and multiply by the ammount TerminalPixels (Cells)
 		x := (val / sumValues) * float64(frameSize)
 		arr = append(arr, int(math.Ceil(x)))
 	}

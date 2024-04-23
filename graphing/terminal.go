@@ -16,13 +16,15 @@ type TerminalManger struct {
 	height int
 
 	termBuffer buffer
-	renderSync syncer
+	renderSync syncer // the syncer for the parallel / concurrent component rendering
 
 	delta         int64
 	previousFrame time.Time
 
 	// Thousand FPS mode
 	thousandFpsMode bool
+
+	stopChan chan bool
 }
 
 func NewTerminalManager(thousandFpsMode bool) *TerminalManger {
@@ -86,4 +88,24 @@ func (tm *TerminalManger) Render() {
 	if !tm.thousandFpsMode {
 		time.Sleep(10 * time.Millisecond)
 	}
+}
+
+func (tm *TerminalManger) Start() {
+	tm.stopChan = make(chan bool)
+
+	go func() {
+		for {
+			tm.Render()
+			select {
+			case <-tm.stopChan:
+				return
+			default:
+				continue
+			}
+		}
+	}()
+}
+
+func (tm *TerminalManger) Stop() {
+	tm.stopChan <- true
 }
