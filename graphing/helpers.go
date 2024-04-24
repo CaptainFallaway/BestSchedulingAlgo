@@ -28,7 +28,6 @@ func constructChanSendFunc(pc chan termPixel, size componentBounds) func(rune, i
 	}
 }
 
-// Helper function since i do the exact same thing in two places
 func getSpan(span ...int) int {
 	if len(span) >= 1 {
 		return span[0]

@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// A function passed as a argument for sending each pixel / character / cell to the terminal
 type PixelSender func(char rune, x int, y int, ansiOpts ...AnsiOption)
 
 type AnsiOption string
@@ -26,8 +27,8 @@ type componentBounds struct {
 	OffsetY int
 }
 
-// In the future pixels should either be ANSI instructions with pos
-// and with or with other ANSI attributes
+// A term pixel is one character on the graph
+// these can also be called cells
 type termPixel struct {
 	Char     rune
 	X        int
@@ -39,6 +40,7 @@ func (tp termPixel) toAnsi() string {
 	return fmt.Sprintf("%s\x1b[%d;%dH%c\x1b[0m", tp.ansiOpts, tp.Y, tp.X, tp.Char)
 }
 
+// the ansi options that can be used by the render function of a model when sending the pixel via the pixelsender function
 const (
 	Bold            AnsiOption = "\x1b[1m"
 	Faint           AnsiOption = "\x1b[2m"

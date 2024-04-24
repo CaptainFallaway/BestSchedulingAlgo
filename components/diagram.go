@@ -79,6 +79,7 @@ func (d *Diagram) Render(delta int64, size graphing.CompDimensions, ps graphing.
 		Arr: getDiagramPixelCounts(values, (size.Height-2)*(size.Width-2)),
 	}
 
+	// Rendering of the diagram graph
 	prev := 0
 	counted := 0
 	color := colorStack.Pop()

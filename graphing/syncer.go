@@ -2,6 +2,7 @@ package graphing
 
 import "sync"
 
+// Defer the Done function to sync the
 type ISyncer interface {
 	Done()
 }

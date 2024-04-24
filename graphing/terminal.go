@@ -18,29 +18,32 @@ type TerminalManger struct {
 	termBuffer buffer
 	renderSync syncer // the syncer for the parallel / concurrent component rendering
 
+	// The delta stuff
 	delta         int64
 	previousFrame time.Time
-
-	// Thousand FPS mode
-	thousandFpsMode bool
+	fps           uint16
 
 	stopChan chan bool
+
+	sleepPerRenderCycle time.Duration // Just a int64, uhm, weird implementation
 }
 
-func NewTerminalManager(thousandFpsMode bool) *TerminalManger {
-	hideCursor()
-	clearScreen()
-
+func NewTerminalManager(options ...TerminalOption) *TerminalManger {
 	width, height := consolesize.GetConsoleSize()
 
-	return &TerminalManger{
-		Layout:          Layout{},
-		width:           width,
-		height:          height,
-		termBuffer:      *NewBuffer(width, height),
-		renderSync:      syncer{},
-		thousandFpsMode: thousandFpsMode,
+	temp := &TerminalManger{
+		Layout:     Layout{},
+		width:      width,
+		height:     height,
+		termBuffer: *NewBuffer(width, height),
+		renderSync: syncer{},
 	}
+
+	for _, option := range options {
+		option(temp)
+	}
+
+	return temp
 }
 
 func (tm *TerminalManger) Render() {
@@ -75,8 +78,6 @@ func (tm *TerminalManger) Render() {
 		if tp != buffItem && !(buffItem.Char == 0 && tp.Char == ' ') {
 			tm.termBuffer.Set(tp)
 			instructions.WriteString(tp.toAnsi())
-			// os.Stdout.WriteString(tp.toAnsi())
-			// time.Sleep(time.Nanosecond)
 		}
 	}
 
@@ -85,23 +86,42 @@ func (tm *TerminalManger) Render() {
 	tm.delta = time.Since(tm.previousFrame).Milliseconds()
 	tm.previousFrame = time.Now()
 
-	if !tm.thousandFpsMode {
-		time.Sleep(10 * time.Millisecond)
+	if tm.sleepPerRenderCycle > 0 {
+		time.Sleep(tm.sleepPerRenderCycle * time.Millisecond)
 	}
+}
+
+func (tm *TerminalManger) GetFps() uint16 {
+	return tm.fps
 }
 
 func (tm *TerminalManger) Start() {
 	tm.stopChan = make(chan bool)
 
+	hideCursor()
+	clearScreen()
+
 	go func() {
+		var c uint16
+		t := time.Now()
+
 		for {
 			tm.Render()
+			c++
+
 			select {
 			case <-tm.stopChan:
 				return
 			default:
+				if time.Since(t).Seconds() >= 1 {
+					tm.fps = c
+					t = time.Now()
+					c = 0
+				}
+
 				continue
 			}
+
 		}
 	}()
 }

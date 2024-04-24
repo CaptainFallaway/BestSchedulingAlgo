@@ -4,27 +4,22 @@ import "github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
 
 type Stack[T graphing.AnsiOption | int] struct {
 	Arr []T
+
+	cycle bool
+	idx   int
 }
 
 func NewColorStack() *Stack[graphing.AnsiOption] {
 	return &Stack[graphing.AnsiOption]{
 		Arr: []graphing.AnsiOption{
-			graphing.FgRed,
-			graphing.FgGreen,
-			graphing.FgYellow,
-			graphing.FgBlue,
-			graphing.FgMagenta,
-			graphing.FgCyan,
-			graphing.FgLightGray,
-			graphing.FgDarkGray,
-			graphing.FgBrightRed,
-			graphing.FgBrightGreen,
-			graphing.FgBrightYellow,
 			graphing.FgBrightBlue,
-			graphing.FgBrightMagenta,
+			graphing.FgBrightRed,
+			graphing.FgBrightYellow,
+			graphing.FgBrightGreen,
 			graphing.FgBrightCyan,
-			graphing.FgWhite,
+			graphing.FgBrightMagenta,
 		},
+		cycle: true,
 	}
 }
 
@@ -34,7 +29,60 @@ func (c *Stack[T]) Pop() T {
 		return ret
 	}
 
-	ret := c.Arr[0]
-	c.Arr = c.Arr[1:]
+	if c.idx >= len(c.Arr) {
+		c.idx = 0
+	}
+
+	// Remember c.idx is initialized as 0
+	ret := c.Arr[c.idx]
+
+	if !c.cycle {
+		c.Arr = c.Arr[1:]
+	} else {
+		c.idx++
+	}
+
 	return ret
+}
+
+type Borders struct {
+	TopLeft     rune
+	TopRight    rune
+	BottomLeft  rune
+	BottomRight rune
+	Horizontal  rune
+	Vertical    rune
+}
+
+// ═║╔╗╚╝
+// ┌┐└┘─│
+var Border = Borders{
+	TopLeft:     '┌',
+	TopRight:    '┐',
+	BottomLeft:  '└',
+	BottomRight: '┘',
+	Horizontal:  '─',
+	Vertical:    '│',
+}
+
+func getBorder(c, r, width, height int, char rune) rune {
+	if c == 0 && r == 0 {
+		return Border.TopLeft
+	}
+	if c == width-1 && r == 0 {
+		return Border.TopRight
+	}
+	if c == 0 && r == height-1 {
+		return Border.BottomLeft
+	}
+	if c == width-1 && r == height-1 {
+		return Border.BottomRight
+	}
+	if r == 0 || r == height-1 {
+		return Border.Horizontal
+	}
+	if c == 0 || c == width-1 {
+		return Border.Vertical
+	}
+	return char
 }

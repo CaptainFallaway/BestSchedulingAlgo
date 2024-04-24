@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"time"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/components"
@@ -23,13 +24,24 @@ func startKeyboard() {
 	}
 }
 
+func clearScreen() {
+	os.Stdout.WriteString("\x1b[2J")
+}
+
+func hideCursor() {
+	os.Stdout.WriteString("\x1b[?25l")
+}
+
 func main() {
 	startProfiler()
 	startKeyboard()
+	clearScreen()
+	hideCursor()
+
 	defer keyboard.Close()
 
 	// The terminal stuff
-	tm := graphing.NewTerminalManager(false)
+	tm := graphing.NewTerminalManager()
 
 	fpsBox := components.FpsBox{}
 	inputComp := components.InputBox{}
@@ -40,23 +52,12 @@ func main() {
 	tm.Row().Col(&inputComp, 5).Col(&fpsBox)
 	tm.Row(4).Col(&cpuDiagram1).Col(&cpuDiagram2).Col(&cpuDiagram3)
 
-	// tm.Start()
-	// on := true
+	tm.Start()
 
-	// In all reality dont use this way of doing the render loop
 	go func() {
-		c := 0
-		t := time.Now()
-
 		for {
-			tm.Render()
-			c++
-
-			if time.Since(t).Seconds() >= 1 {
-				fpsBox.Fps = c
-				t = time.Now()
-				c = 0
-			}
+			time.Sleep(500 * time.Millisecond)
+			fpsBox.Fps = int(tm.GetFps())
 		}
 	}()
 
@@ -89,14 +90,6 @@ func main() {
 			cpuDiagram3.TestSetValues(input)
 
 			inputComp.Clear()
-			// case keyboard.KeyEsc:
-			// 	if on {
-			// 		tm.Stop()
-			// 	} else {
-			// 		tm.Start()
-			// 	}
-
-			// 	on = !on
 		}
 	}
 }
