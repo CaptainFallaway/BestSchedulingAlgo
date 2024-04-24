@@ -1,16 +1,17 @@
 package internal
 
 type IDiagram interface {
-	Update(processes []Process)
+	Update(processes []float64)
 }
 
 type IScheduler interface {
-	SubtractTime(time uint16)
+	SubtractTime(time float64)
 	AddProcesses(processes []Process)
+	GetWorkTimes() []float64
 }
 
 type Process struct {
 	Name     string
-	ExecTime uint16
-	Prio     uint8
+	ExecTime float64
+	Prio     uint16
 }

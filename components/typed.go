@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 )
 
 const maxRows = 20
@@ -42,7 +42,7 @@ func (s *SavedText) getRows() []string {
 	return s.Rows
 }
 
-func (s *SavedText) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
+func (s *SavedText) Render(delta int64, size terminal.CompDimensions, ps terminal.PixelSender, syncer terminal.ISyncer) {
 	defer syncer.Done()
 
 	rows := s.getRows()

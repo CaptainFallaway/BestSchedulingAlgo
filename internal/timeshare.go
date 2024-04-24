@@ -1,28 +1,33 @@
 package internal
 
-// Linked list node
-type llnode struct {
-	Process
-	next *llnode
-}
-
-func subtractTime(time uint16, node llnode) {
-	node.ExecTime -= time
-
-	if node.ExecTime <= 0 {
-
-	}
-}
-
 type TimeShare struct {
-	processCount uint16
-	head         *llnode
+	Arr []Process
 }
 
-func (ts *TimeShare) SubtractTime(time uint16) {
+func (ts *TimeShare) SubtractTime(time float64) {
+	subTime := time / float64(len(ts.Arr))
 
+	auxArr := make([]Process, 0, len(ts.Arr))
+	for _, proc := range ts.Arr {
+		proc.ExecTime -= subTime
+		if proc.ExecTime > 0 {
+			auxArr = append(auxArr, proc)
+		}
+	}
+
+	ts.Arr = auxArr
 }
 
 func (ts *TimeShare) AddProcesses(processes []Process) {
-	// TODO
+	ts.Arr = append(ts.Arr, processes...)
+}
+
+func (ts *TimeShare) GetWorkTimes() []float64 {
+	temp := make([]float64, 0, len(ts.Arr))
+
+	for _, item := range ts.Arr {
+		temp = append(temp, item.ExecTime)
+	}
+
+	return temp
 }

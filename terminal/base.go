@@ -1,4 +1,4 @@
-package graphing
+package terminal
 
 import (
 	"fmt"

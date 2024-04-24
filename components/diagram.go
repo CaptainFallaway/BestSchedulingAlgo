@@ -2,11 +2,10 @@ package components
 
 import (
 	"math"
-	"strconv"
-	"strings"
+	"slices"
 	"sync"
 
-	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 )
 
 type Diagram struct {
@@ -18,23 +17,32 @@ type Diagram struct {
 	Labels [][]rune
 }
 
-func (d *Diagram) TestSetValues(inpt string) {
-	sNums := strings.Split(inpt, " ")
-	nums := make([]float64, 0, len(sNums))
-
-	for _, sNum := range sNums {
-		num, err := strconv.ParseFloat(sNum, 64)
-		if err != nil {
-			num = 0
-		}
-		nums = append(nums, num)
-	}
-
+func (d *Diagram) Update(arr []float64) {
 	d.m.Lock()
 	defer d.m.Unlock()
 
-	d.Values = nums
+	slices.Sort(arr)
+
+	d.Values = arr
 }
+
+// func (d *Diagram) TestSetValues(inpt string) {
+// 	sNums := strings.Split(inpt, " ")
+// 	nums := make([]float64, 0, len(sNums))
+
+// 	for _, sNum := range sNums {
+// 		num, err := strconv.ParseFloat(sNum, 64)
+// 		if err != nil {
+// 			num = 0
+// 		}
+// 		nums = append(nums, num)
+// 	}
+
+// 	d.m.Lock()
+// 	defer d.m.Unlock()
+
+// 	d.Values = nums
+// }
 
 func (d *Diagram) UpdateValues(vals []float64) {
 	d.m.Lock()
@@ -50,7 +58,7 @@ func (d *Diagram) GetValues() []float64 {
 	return d.Values
 }
 
-func (d *Diagram) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
+func (d *Diagram) Render(delta int64, size terminal.CompDimensions, ps terminal.PixelSender, syncer terminal.ISyncer) {
 	defer syncer.Done()
 
 	runeName := []rune(d.DiagramName)
@@ -59,14 +67,14 @@ func (d *Diagram) Render(delta int64, size graphing.CompDimensions, ps graphing.
 	for r := 0; r < size.Height; r++ {
 		for c := 0; c < size.Width; c++ {
 			if r == 0 && size.Width-len(d.DiagramName) > 4 && len(d.DiagramName) > 0 && c-2 < len(d.DiagramName) && c-1 > 0 {
-				ps(runeName[c-2], c, r, graphing.Bold)
+				ps(runeName[c-2], c, r, terminal.Bold)
 				continue
 			}
 
 			char := getBorder(c, r, size.Width, size.Height, ' ')
 
 			if char != ' ' {
-				ps(char, c, r, graphing.Bold)
+				ps(char, c, r, terminal.Bold)
 			}
 		}
 	}
@@ -85,6 +93,8 @@ func (d *Diagram) Render(delta int64, size graphing.CompDimensions, ps graphing.
 	color := colorStack.Pop()
 	count := countStack.Pop()
 
+	renderBlank := len(countStack.Arr) == 0
+
 	for r := 1; r < size.Height-1; r++ {
 		for c := 1; c < size.Width-1; c++ {
 			if counted == count+prev {
@@ -93,7 +103,11 @@ func (d *Diagram) Render(delta int64, size graphing.CompDimensions, ps graphing.
 				color = colorStack.Pop()
 			}
 
-			ps('█', c, r, color, graphing.Bold)
+			if renderBlank {
+				color = terminal.FgBlack
+			}
+
+			ps('█', c, r, color, terminal.Bold)
 
 			counted++
 		}

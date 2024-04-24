@@ -1,23 +1,23 @@
 package components
 
-import "github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+import "github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 
-type Stack[T graphing.AnsiOption | int] struct {
+type Stack[T terminal.AnsiOption | int] struct {
 	Arr []T
 
 	cycle bool
 	idx   int
 }
 
-func NewColorStack() *Stack[graphing.AnsiOption] {
-	return &Stack[graphing.AnsiOption]{
-		Arr: []graphing.AnsiOption{
-			graphing.FgBrightBlue,
-			graphing.FgBrightRed,
-			graphing.FgBrightYellow,
-			graphing.FgBrightGreen,
-			graphing.FgBrightCyan,
-			graphing.FgBrightMagenta,
+func NewColorStack() *Stack[terminal.AnsiOption] {
+	return &Stack[terminal.AnsiOption]{
+		Arr: []terminal.AnsiOption{
+			terminal.FgBrightBlue,
+			terminal.FgBrightRed,
+			terminal.FgBrightYellow,
+			terminal.FgBrightGreen,
+			terminal.FgBrightCyan,
+			terminal.FgBrightMagenta,
 		},
 		cycle: true,
 	}

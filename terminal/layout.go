@@ -1,4 +1,4 @@
-package graphing
+package terminal
 
 type ColumnInterface interface {
 	Col(renderable Renderable, colSpan ...int) ColumnInterface

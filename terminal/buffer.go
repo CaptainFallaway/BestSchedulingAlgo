@@ -1,4 +1,4 @@
-package graphing
+package terminal
 
 type buffer struct {
 	BuffArr []termPixel

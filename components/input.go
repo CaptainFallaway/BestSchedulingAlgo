@@ -3,7 +3,7 @@ package components
 import (
 	"sync"
 
-	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 )
 
 type InputBox struct {
@@ -86,7 +86,7 @@ func (t *InputBox) getInput() []rune {
 
 const proompt = "   Enter Process: "
 
-func (t *InputBox) Render(delta int64, ts graphing.CompDimensions, ps graphing.PixelSender, s graphing.ISyncer) {
+func (t *InputBox) Render(delta int64, ts terminal.CompDimensions, ps terminal.PixelSender, s terminal.ISyncer) {
 	defer s.Done()
 
 	// Render the border
@@ -94,7 +94,7 @@ func (t *InputBox) Render(delta int64, ts graphing.CompDimensions, ps graphing.P
 		for c := 0; c < ts.Width; c++ {
 			border := getBorder(c, r, ts.Width, ts.Height, ' ')
 			if border != ' ' {
-				ps(border, c, r, graphing.FgWhite, graphing.Bold)
+				ps(border, c, r, terminal.FgWhite, terminal.Bold)
 			}
 		}
 	}
@@ -111,19 +111,19 @@ func (t *InputBox) Render(delta int64, ts graphing.CompDimensions, ps graphing.P
 
 	for col := 1; col < ts.Width-1; col++ {
 		if col-1 < proomptLen {
-			ps(proomptRunes[col-1], col, halfSize, graphing.FgWhite, graphing.Bold)
+			ps(proomptRunes[col-1], col, halfSize, terminal.FgWhite, terminal.Bold)
 			continue
 		}
 
 		if col-proomptLen-1 < len(inputted) && len(inputted) != 0 {
 			if col-proomptLen-1 == t.cursorPos {
-				ps(inputted[col-proomptLen-1], col, halfSize, graphing.FgWhite, graphing.Bold, graphing.BgBlue)
+				ps(inputted[col-proomptLen-1], col, halfSize, terminal.FgWhite, terminal.Bold, terminal.BgBlue)
 			} else {
-				ps(inputted[col-proomptLen-1], col, halfSize, graphing.FgWhite, graphing.Bold)
+				ps(inputted[col-proomptLen-1], col, halfSize, terminal.FgWhite, terminal.Bold)
 			}
 		} else {
 			if col-proomptLen-1 == t.cursorPos {
-				ps('█', col, halfSize, graphing.FgBlue, graphing.Bold)
+				ps('█', col, halfSize, terminal.FgBlue, terminal.Bold)
 			} else {
 				ps(' ', col, halfSize)
 			}

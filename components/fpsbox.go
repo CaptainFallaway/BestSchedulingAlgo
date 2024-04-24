@@ -3,14 +3,14 @@ package components
 import (
 	"fmt"
 
-	"github.com/CaptainFallaway/BestSchedulingAlgo/graphing"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 )
 
 type FpsBox struct {
 	Fps int
 }
 
-func (f *FpsBox) Render(delta int64, size graphing.CompDimensions, ps graphing.PixelSender, syncer graphing.ISyncer) {
+func (f *FpsBox) Render(delta int64, size terminal.CompDimensions, ps terminal.PixelSender, syncer terminal.ISyncer) {
 	defer syncer.Done()
 
 	if delta == 0 {

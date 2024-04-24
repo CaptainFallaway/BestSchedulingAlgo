@@ -4,21 +4,28 @@ type Fifo struct {
 	Arr []Process
 }
 
-func (f *Fifo) SubtractTime(time uint16) {
+func (f *Fifo) SubtractTime(time float64) {
 	if len(f.Arr) == 0 {
 		return
 	}
 
-	item := f.Arr[0]
-	item.ExecTime -= time
+	f.Arr[0].ExecTime -= time
 
-	if item.ExecTime <= 0 {
+	if f.Arr[0].ExecTime <= 0 {
 		f.Arr = f.Arr[1:]
 	}
 }
 
 func (f *Fifo) AddProcesses(processes []Process) {
-	for _, process := range processes {
-		f.Arr = append(f.Arr, process)
+	f.Arr = append(f.Arr, processes...)
+}
+
+func (f *Fifo) GetWorkTimes() []float64 {
+	temp := make([]float64, 0, len(f.Arr))
+
+	for _, item := range f.Arr {
+		temp = append(temp, item.ExecTime)
 	}
+
+	return temp
 }
