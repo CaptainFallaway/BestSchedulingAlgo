@@ -2,22 +2,27 @@ package components
 
 import "github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 
-type Stack[T terminal.AnsiOption | int] struct {
+type color struct {
+	Fg terminal.AnsiOption
+	Bg terminal.AnsiOption
+}
+
+type Stack[T color | int | []rune] struct {
 	Arr []T
 
 	cycle bool
 	idx   int
 }
 
-func NewColorStack() *Stack[terminal.AnsiOption] {
-	return &Stack[terminal.AnsiOption]{
-		Arr: []terminal.AnsiOption{
-			terminal.FgBrightBlue,
-			terminal.FgBrightRed,
-			terminal.FgBrightYellow,
-			terminal.FgBrightGreen,
-			terminal.FgBrightCyan,
-			terminal.FgBrightMagenta,
+func NewColorStack() *Stack[color] {
+	return &Stack[color]{
+		Arr: []color{
+			{terminal.FgBrightBlue, terminal.BgBrightBlue},
+			{terminal.FgBrightRed, terminal.BgBrightRed},
+			{terminal.FgBrightYellow, terminal.BgBrightYellow},
+			{terminal.FgBrightGreen, terminal.BgBrightGreen},
+			{terminal.FgBrightCyan, terminal.BgBrightCyan},
+			{terminal.FgBrightMagenta, terminal.BgBrightMagenta},
 		},
 		cycle: true,
 	}

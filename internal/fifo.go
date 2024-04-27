@@ -29,3 +29,13 @@ func (f *Fifo) GetWorkTimes() []float64 {
 
 	return temp
 }
+
+func (f *Fifo) GetProcessNames() []string {
+	temp := make([]string, 0, len(f.Arr))
+
+	for _, item := range f.Arr {
+		temp = append(temp, item.Name)
+	}
+
+	return temp
+}

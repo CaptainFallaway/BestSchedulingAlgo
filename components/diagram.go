@@ -17,38 +17,19 @@ type Diagram struct {
 	Labels [][]rune
 }
 
-func (d *Diagram) Update(arr []float64) {
+func (d *Diagram) Update(arr []float64, labels []string) {
 	d.m.Lock()
 	defer d.m.Unlock()
 
 	slices.Sort(arr)
 
 	d.Values = arr
-}
 
-// func (d *Diagram) TestSetValues(inpt string) {
-// 	sNums := strings.Split(inpt, " ")
-// 	nums := make([]float64, 0, len(sNums))
+	d.Labels = make([][]rune, len(labels))
 
-// 	for _, sNum := range sNums {
-// 		num, err := strconv.ParseFloat(sNum, 64)
-// 		if err != nil {
-// 			num = 0
-// 		}
-// 		nums = append(nums, num)
-// 	}
-
-// 	d.m.Lock()
-// 	defer d.m.Unlock()
-
-// 	d.Values = nums
-// }
-
-func (d *Diagram) UpdateValues(vals []float64) {
-	d.m.Lock()
-	defer d.m.Unlock()
-
-	d.Values = vals
+	for i, label := range labels {
+		d.Labels[i] = []rune(label)
+	}
 }
 
 func (d *Diagram) GetValues() []float64 {
@@ -81,10 +62,24 @@ func (d *Diagram) Render(delta int64, size terminal.CompDimensions, ps terminal.
 
 	values := d.GetValues()
 
+	ac := 1
+	for _, item := range d.Labels {
+		for _, char := range item {
+			ps(char, ac, 1)
+			ac++
+		}
+		ac++
+	}
+
+	return
+
 	// May use sync.Pool here
 	colorStack := NewColorStack()
 	countStack := Stack[int]{
 		Arr: getDiagramPixelCounts(values, (size.Height-2)*(size.Width-2)),
+	}
+	labelStack := Stack[[]rune]{
+		Arr: d.Labels,
 	}
 
 	// Rendering of the diagram graph
@@ -92,6 +87,8 @@ func (d *Diagram) Render(delta int64, size terminal.CompDimensions, ps terminal.
 	counted := 0
 	color := colorStack.Pop()
 	count := countStack.Pop()
+	label := labelStack.Pop()
+	co := (count / 2) - count + len(label) - 1
 
 	renderBlank := len(countStack.Arr) == 0
 
@@ -101,14 +98,23 @@ func (d *Diagram) Render(delta int64, size terminal.CompDimensions, ps terminal.
 				prev = counted
 				count = countStack.Pop()
 				color = colorStack.Pop()
+				label = labelStack.Pop()
+				co = (count / 2) - count + len(label) - 1
 			}
 
 			if renderBlank {
-				color = terminal.FgBlack
+				ps('█', c, r, terminal.FgBlack, terminal.Bold)
+				counted++
+				continue
 			}
 
-			ps('█', c, r, color, terminal.Bold)
+			if count-len(label) > 0 && co >= 0 && co < len(label) && len(label) > 0 {
+				ps(label[co], c, r, color.Bg, terminal.Bold)
+			} else {
+				ps('█', c, r, color.Fg, terminal.Bold)
+			}
 
+			co++
 			counted++
 		}
 	}

@@ -23,5 +23,5 @@ func NewCpu(scheduler IScheduler, diagram IDiagram, optWorkTime ...float64) *Cpu
 
 func (c *Cpu) Work() {
 	c.SubtractTime(c.workTime)
-	c.Update(c.GetWorkTimes())
+	c.Update(c.GetWorkTimes(), c.GetProcessNames())
 }

@@ -31,3 +31,13 @@ func (ts *TimeShare) GetWorkTimes() []float64 {
 
 	return temp
 }
+
+func (ts *TimeShare) GetProcessNames() []string {
+	temp := make([]string, 0, len(ts.Arr))
+
+	for _, item := range ts.Arr {
+		temp = append(temp, item.Name)
+	}
+
+	return temp
+}

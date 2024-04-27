@@ -12,6 +12,13 @@ type InputBox struct {
 	m         sync.RWMutex
 }
 
+func (t *InputBox) SetInput(inpt string) {
+	t.m.Lock()
+	defer t.m.Unlock()
+	t.inputted = []rune(inpt)
+	t.cursorPos = len(t.inputted)
+}
+
 func (t *InputBox) GetInput() string {
 	t.m.RLock()
 	defer t.m.RUnlock()

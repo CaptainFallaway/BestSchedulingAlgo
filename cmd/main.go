@@ -4,11 +4,13 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/CaptainFallaway/BestSchedulingAlgo/components"
-	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 	"github.com/CaptainFallaway/BestSchedulingAlgo/internal"
+	"github.com/CaptainFallaway/BestSchedulingAlgo/terminal"
 	"github.com/eiannone/keyboard"
 )
 
@@ -42,7 +44,7 @@ func main() {
 	defer keyboard.Close()
 
 	// The terminal stuff
-	tm := terminal.NewTerminalManager()
+	tm := terminal.NewTerminalManager(terminal.FrameSleep(10))
 
 	fpsBox := components.FpsBox{}
 	inputComp := components.InputBox{}
@@ -57,14 +59,11 @@ func main() {
 	dispatcher := internal.NewDispatcher(cpu1, cpu2, cpu3)
 
 	tm.Row().Col(&inputComp, 5).Col(&fpsBox)
-	tm.Row(4).Col(&cpuDiagram1).Col(&cpuDiagram2).Col(&cpuDiagram3)
+	tm.Row(4).Col(&cpuDiagram1) //.Col(&cpuDiagram2).Col(&cpuDiagram3)
 
 	tm.Start()
 
-	gathering := make([]internal.Process, 0)
-	for i := 0; i < 3; i++ {
-		gathering = append(gathering, internal.Process{ExecTime: 1000, Prio: uint16(i)})
-	}
+	history := internal.History{}
 
 	// Fps counter goroutine
 	go func() {
@@ -102,18 +101,60 @@ func main() {
 			inputComp.Home()
 		case keyboard.KeyEnd:
 			inputComp.End()
+		case keyboard.KeyArrowUp:
+			input, ok := history.Up()
+			if ok {
+				inputComp.SetInput(input)
+			}
+		case keyboard.KeyArrowDown:
+			input, ok := history.Down()
+			if ok {
+				inputComp.SetInput(input)
+			} else {
+				inputComp.Clear()
+			}
 		case keyboard.KeyEnter:
-			// input := inputComp.GetInput()
+			input := inputComp.GetInput()
+			processes := MarshalInput(input)
 
-			dispatcher.Push(gathering)
+			dispatcher.Push(processes)
 
 			inputComp.Clear()
-			// case keyboard.KeyTab:
+			history.Add(input)
 		}
 	}
 }
 
 func MarshalInput(input string) []internal.Process {
-	// todo
-	return nil
+	slices := strings.Split(input, "|")
+
+	for i, slice := range slices {
+		slices[i] = strings.TrimSpace(slice)
+	}
+
+	processes := make([]internal.Process, 0, len(slices))
+
+	for _, slice := range slices {
+		parts := strings.Split(slice, " ")
+
+		if len(parts) != 3 {
+			continue
+		}
+
+		name := parts[0]
+
+		execTime, err := strconv.ParseFloat(parts[1], 64)
+		if err != nil {
+			execTime = 1000
+		}
+
+		prio, err := strconv.ParseUint(parts[2], 10, 16)
+		if err != nil {
+			prio = 1
+		}
+
+		processes = append(processes, internal.Process{Name: name, ExecTime: execTime, Prio: uint16(prio)})
+	}
+
+	return processes
 }

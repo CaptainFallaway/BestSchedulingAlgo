@@ -47,3 +47,13 @@ func (p *Prio) GetWorkTimes() []float64 {
 
 	return temp
 }
+
+func (p *Prio) GetProcessNames() []string {
+	temp := make([]string, 0, len(p.Arr))
+
+	for _, item := range p.Arr {
+		temp = append(temp, item.Name)
+	}
+
+	return temp
+}
