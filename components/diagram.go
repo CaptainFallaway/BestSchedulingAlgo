@@ -62,16 +62,16 @@ func (d *Diagram) Render(delta int64, size terminal.CompDimensions, ps terminal.
 
 	values := d.GetValues()
 
-	ac := 1
-	for _, item := range d.Labels {
-		for _, char := range item {
-			ps(char, ac, 1)
-			ac++
-		}
-		ac++
-	}
+	// ac := 1
+	// for _, item := range d.Labels {
+	// 	for _, char := range item {
+	// 		ps(char, ac, 1)
+	// 		ac++
+	// 	}
+	// 	ac++
+	// }
 
-	return
+	// return
 
 	// May use sync.Pool here
 	colorStack := NewColorStack()

@@ -48,9 +48,9 @@ func main() {
 
 	fpsBox := components.FpsBox{}
 	inputComp := components.InputBox{}
-	cpuDiagram1 := components.Diagram{DiagramName: "CPU 1"}
-	cpuDiagram2 := components.Diagram{DiagramName: "CPU 2"}
-	cpuDiagram3 := components.Diagram{DiagramName: "CPU 3"}
+	cpuDiagram1 := components.Diagram{DiagramName: "CPU 1 Fifo"}
+	cpuDiagram2 := components.Diagram{DiagramName: "CPU 2 TimeShare"}
+	cpuDiagram3 := components.Diagram{DiagramName: "CPU 3 Prio"}
 
 	// Hello Dan
 	cpu1 := internal.NewCpu(&internal.Fifo{}, &cpuDiagram1)
@@ -59,7 +59,7 @@ func main() {
 	dispatcher := internal.NewDispatcher(cpu1, cpu2, cpu3)
 
 	tm.Row().Col(&inputComp, 5).Col(&fpsBox)
-	tm.Row(4).Col(&cpuDiagram1) //.Col(&cpuDiagram2).Col(&cpuDiagram3)
+	tm.Row(4).Col(&cpuDiagram1).Col(&cpuDiagram2).Col(&cpuDiagram3)
 
 	tm.Start()
 

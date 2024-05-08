@@ -61,11 +61,12 @@ type Borders struct {
 
 // ═║╔╗╚╝
 // ┌┐└┘─│
+// ╭╮╯╰
 var Border = Borders{
-	TopLeft:     '┌',
-	TopRight:    '┐',
-	BottomLeft:  '└',
-	BottomRight: '┘',
+	TopLeft:     '╭',
+	TopRight:    '╮',
+	BottomLeft:  '╰',
+	BottomRight: '╯',
 	Horizontal:  '─',
 	Vertical:    '│',
 }
